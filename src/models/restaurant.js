@@ -12,8 +12,22 @@ class Restaurant {
     }
 
     findAll = async params => {
-        let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.name, r.min_order_fee, r.avg_delivery_time, r.avg_point 
-        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id`;
+        let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
+        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id GROUP BY r.id`;
+
+        if (!Object.keys(params).length) {
+            return await query(sql);
+        }
+
+        const { keySet, values } = parseQueryParamsWithPlaceHolders(params, ' AND ');
+        sql += ` WHERE ${keySet}`;
+
+        return await query(sql, [...values]);
+    }
+
+    findMostPopulars = async params => {
+        let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating FROM ${this.tableName} r 
+        JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id GROUP BY r.id ORDER BY rating DESC LIMIT 5`;
 
         if (!Object.keys(params).length) {
             return await query(sql);
@@ -26,8 +40,9 @@ class Restaurant {
     }
 
     findById = async id => {
-        let sql = `SELECT r.id, r.owner_id, c.name AS city, d.name AS district, r.image, r.name, r.min_order_fee, r.avg_delivery_time, r.avg_point 
-        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id WHERE r.id = ? AND r.status_id = ?`;
+        let sql = `SELECT r.id, r.owner_id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
+        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id 
+        WHERE r.id = ? AND r.status_id = ? GROUP BY r.id`;
 
         return await query(sql, [id, 1]);
     }

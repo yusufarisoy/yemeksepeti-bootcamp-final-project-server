@@ -29,6 +29,19 @@ class RestaurantsController {
         });
     }
 
+    findMostPopulars = async (req, res) => {
+        await Restaurant.findMostPopulars(req.query)
+        .then(results => {
+            if (results.length > 0) {
+                res.status(200).json(new SuccessDataResponse('Most popular restaurants listed successfully.', results));
+            } else {
+                res.status(200).json(new ErrorResponse('No restaurant found.'));
+            }
+        }, () => {
+            res.status(500).json(new ErrorResponse('Internal server error.'));
+        });
+    }
+
     findById = async (req, res) => {
         await Restaurant.findById(parseInt(req.params.id))
         .then(results => {
