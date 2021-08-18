@@ -12,10 +12,11 @@ class Order {
     }
 
     findAllOfUser = async (userId, params) => {
-        let sql = `SELECT o.id, o.user_id, CONCAT(u.name + ' ' + u.surname) AS user, o.restaurant_id, r.image AS restaurant_image, r.name AS restaurant, r.avg_point, a.id AS address_id, 
-        c.name AS city, d.name AS district, a.address, p.type AS payment_type, s.type AS order_status, o.note, o.date FROM ${this.tableName} o JOIN users u ON o.user_id = u.id JOIN 
-        restaurants r ON o.restaurant_id = r.id JOIN addresses a ON o.delivery_address_id = a.id JOIN districts d ON a.district_id = d.id JOIN cities c ON d.city_id = c.id 
-        JOIN payment_types AS p ON o.payment_type_id = p.id JOIN order_statuses s ON o.status_id = s.id WHERE o.user_id = ?`;
+        let sql = `SELECT o.id, o.user_id, CONCAT(u.name, ' ', u.surname) AS user, o.restaurant_id, r.image AS restaurant_image, r.name AS restaurant, r.avg_point, 
+        a.id AS delivery_address_id, c.name AS city, d.name AS district, a.address AS delivery_address, p.type AS payment_type, s.type AS order_status, o.note, o.date, 
+        SUM(orf.quantity * f.price) AS total_price FROM ${this.tableName} o JOIN users u ON o.user_id = u.id JOIN restaurants r ON o.restaurant_id = r.id JOIN addresses a 
+        ON o.delivery_address_id = a.id JOIN districts d ON a.district_id = d.id JOIN cities c ON d.city_id = c.id JOIN payment_types AS p ON o.payment_type_id = p.id JOIN 
+        order_statuses s ON o.status_id = s.id JOIN order_food orf ON o.id = orf.order_id JOIN foods f ON orf.food_id = f.id WHERE o.user_id = ? GROUP BY o.id`;
 
         if (!Object.keys(params).length) {
             return await query(sql, [userId]);
@@ -28,10 +29,11 @@ class Order {
     }
 
     findAllOfRestaurant = async (restaurantId, params) => {
-        let sql = `SELECT o.id, o.user_id, CONCAT(u.name + ' ' + u.surname) AS user, o.restaurant_id, r.image AS restaurant_image, r.name AS restaurant, r.avg_point, a.id AS address_id, 
-        c.name AS city, d.name AS district, a.address, p.type AS payment_type, s.type AS order_status, o.note, o.date FROM ${this.tableName} o JOIN users u ON o.user_id = u.id JOIN 
-        restaurants r ON o.restaurant_id = r.id JOIN addresses a ON o.delivery_address_id = a.id JOIN districts d ON a.district_id = d.id JOIN cities c ON d.city_id = c.id 
-        JOIN payment_types AS p ON o.payment_type_id = p.id JOIN order_statuses s ON o.status_id = s.id WHERE o.restaurant_id = ?`;
+        let sql = `SELECT o.id, o.user_id, CONCAT(u.name, ' ', u.surname) AS user, o.restaurant_id, r.image AS restaurant_image, r.name AS restaurant, r.avg_point, 
+        a.id AS delivery_address_id, c.name AS city, d.name AS district, a.address AS delivery_address, p.type AS payment_type, s.type AS order_status, o.note, o.date, 
+        SUM(orf.quantity * f.price) AS total_price FROM ${this.tableName} o JOIN users u ON o.user_id = u.id JOIN restaurants r ON o.restaurant_id = r.id JOIN addresses a 
+        ON o.delivery_address_id = a.id JOIN districts d ON a.district_id = d.id JOIN cities c ON d.city_id = c.id JOIN payment_types AS p ON o.payment_type_id = p.id JOIN 
+        order_statuses s ON o.status_id = s.id JOIN order_food orf ON o.id = orf.order_id JOIN foods f ON orf.food_id = f.id WHERE o.restaurant_id = ? GROUP BY o.id`;
 
         if (!Object.keys(params).length) {
             return await query(sql, [restaurantId]);
