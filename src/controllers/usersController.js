@@ -73,15 +73,15 @@ class UsersController {
     }
 
     changePassword = async (req, res) => {
-        const { oldPassword, newPassword } = req.body;
+        const { current_password, new_password } = req.body;
         await User.findById(parseInt(res.locals.id))
         .then(async results => {
             if (results.length > 0) {
-                const passwordMatch = await bcrypt.compare(oldPassword, results[0].password);
+                const passwordMatch = await bcrypt.compare(current_password, results[0].password);
                 if (!passwordMatch) {
                     return res.status(200).json(new ErrorResponse('Incorrect password.'));
                 }
-                newPassword = bcrypt.hashSync(newPassword, 8);
+                let newPassword = bcrypt.hashSync(new_password, 8);
                 await User.changePassword(parseInt(res.locals.id), newPassword)
                 .then(subResults => {
                     if (subResults.affectedRows > 0) {
