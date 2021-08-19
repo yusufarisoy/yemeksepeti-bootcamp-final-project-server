@@ -33,7 +33,7 @@ class OrdersController {
         await Order.findAllOfRestaurant(parseInt(res.locals.id), parseInt(req.params.restaurant_id), req.body)
         .then(results => {
             if (results.length > 0) {
-                res.status(200).json(new SuccessDataResponse('Orders of restaurant listed successfully.', subResults));
+                res.status(200).json(new SuccessDataResponse('Orders of restaurant listed successfully.', results));
             } else {
                 res.status(200).json(new ErrorResponse('No order found.'));
             }
