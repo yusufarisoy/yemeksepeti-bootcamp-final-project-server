@@ -12,7 +12,7 @@ class Address {
     }
 
     findAll = async userId => {
-        let sql = `SELECT a.id, c.name AS city, d.name AS district, a.title, a.address, a.last_update_date FROM ${this.tableName} a 
+        let sql = `SELECT a.id, c.id AS city_id, c.name AS city, a.district_id, d.name AS district, a.title, a.address, a.last_update_date FROM ${this.tableName} a 
         JOIN districts d ON a.district_id = d.id JOIN cities c ON d.city_id = c.id WHERE a.user_id = ?`;
 
         return await query(sql, [userId]);
