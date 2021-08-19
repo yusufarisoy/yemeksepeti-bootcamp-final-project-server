@@ -10,8 +10,8 @@ class Order_Food {
     }
 
     findAll = async orderId => {
-        let sql = `SELECT orf.id, orf.order_id, orf.food_id, f.name AS food, f.price, orf.quantity, orf.removed_ingredients 
-        FROM ${this.tableName} orf JOIN foods f ON orf.food_id = f.id WHERE orf.order_id = ?`;
+        let sql = `SELECT orf.id, f.name AS food, f.price, orf.quantity, orf.removed_ingredients 
+        FROM ${this.tableName} orf JOIN foods f ON f.id = orf.food_id WHERE orf.order_id = ?`;
 
         return await query(sql, [orderId]);
     }

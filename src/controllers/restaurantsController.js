@@ -5,8 +5,7 @@ class RestaurantsController {
 
     create = async (req, res) => {
         if (res.locals.role !== 'owner') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
         await Restaurant.create(parseInt(res.locals.id), req.body)
         .then(() => {
@@ -57,69 +56,33 @@ class RestaurantsController {
 
     update = async (req, res) => {
         if (res.locals.role !== 'owner') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
-        
-        await Restaurant.findById(parseInt(req.params.id))
-        .then(async results => {
-            if (results.length > 0) {
-                if (parseInt(res.locals.id) !== results[0].owner_id) {
-                    res.status(401).json(new ErrorResponse('Unauthorized access.'));
-                    return;
-                } else {
-                    await Restaurant.update(parseInt(req.params.id), req.body)
-                    .then(subResults => {
-                        if (subResults.affectedRows > 0) {
-                            res.status(200).json(new SuccessResponse('Restaurant information updated successfully.'));
-                        } else {
-                            res.status(200).json(new ErrorResponse('Information update failed.'));
-                        }
-                    }, () => {
-                        res.status(500).json(new ErrorResponse('Internal server error.'));
-                    });
-                }
+        await Restaurant.update(parseInt(res.locals.id), parseInt(req.params.id), req.body)
+        .then(results => {
+            if (results.affectedRows > 0) {
+                res.status(200).json(new SuccessResponse('Restaurant information updated successfully.'));
             } else {
-                res.status(200).json(new ErrorResponse('Restaurant not found.'));
-                return;
+                res.status(200).json(new ErrorResponse('Information update failed.'));
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 
     delete = async (req, res) => {
         if (res.locals.role !== 'owner') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
-
-        await Restaurant.findById(parseInt(req.params.id))
-        .then(async results => {
-            if (results.length > 0) {
-                if (parseInt(res.locals.id) !== results[0].owner_id) {
-                    res.status(401).json(new ErrorResponse('Unauthorized access.'));
-                    return;
-                } else {
-                    await Restaurant.delete(parseInt(req.params.id))
-                    .then(subResults => {
-                        if (subResults.affectedRows > 0) {
-                            res.status(200).json(new SuccessResponse('Restaurant has been deleted successfully.'));
-                        } else {
-                            res.status(200).json(new ErrorResponse('Restaurant delete failed.'));
-                        }
-                    }, () => {
-                        res.status(500).json(new ErrorResponse('Internal server error.'));
-                    });
-                }
+        await Restaurant.delete(parseInt(res.locals.id), parseInt(req.params.id))
+        .then(results => {
+            if (results.affectedRows > 0) {
+                res.status(200).json(new SuccessResponse('Restaurant has been deleted successfully.'));
             } else {
-                res.status(200).json(new ErrorResponse('Restaurant not found.'));
-                return;
+                res.status(200).json(new ErrorResponse('Restaurant delete failed.'));
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 }

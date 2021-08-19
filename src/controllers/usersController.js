@@ -20,8 +20,8 @@ class UsersController {
         });
     }
 
-    findById = async (req, res) => {
-        await User.findById(parseInt(req.params.id))
+    findById = async (_req, res) => {
+        await User.findById(parseInt(res.locals.id))
         .then(results => {
             if (results.length > 0) {
                 delete results[0].password;
@@ -41,19 +41,16 @@ class UsersController {
         await User.findByEmail(email)
         .then(results => {
             if (results.length == 0) {
-                res.status(401).json(new ErrorResponse('Incorrect email or password.'));
-                return;
+                return res.status(401).json(new ErrorResponse('Incorrect email or password.'));
             }
             user = results[0];
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
+            return res.status(500).json(new ErrorResponse('Internal server error.'));
         });
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            res.status(401).json(new ErrorResponse('Incorrect email or password.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Incorrect email or password.'));
         }
 
         const secretKey = process.env.JWT_SECRET;
@@ -63,10 +60,6 @@ class UsersController {
     }
 
     update = async (req, res) => {
-        if (res.locals.id !== parseInt(req.params.id)) {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
-        }
         await User.update(parseInt(res.locals.id), req.body)
         .then(results => {
             if (results.affectedRows > 0) {
@@ -76,26 +69,20 @@ class UsersController {
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 
     changePassword = async (req, res) => {
-        if (res.locals.id !== parseInt(req.params.id)) {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
-        }
         const { oldPassword, newPassword } = req.body;
-        await User.findById(parseInt(req.params.id))
+        await User.findById(parseInt(res.locals.id))
         .then(async results => {
             if (results.length > 0) {
                 const passwordMatch = await bcrypt.compare(oldPassword, results[0].password);
                 if (!passwordMatch) {
-                    res.status(200).json(new ErrorResponse('Incorrect password.'));
-                    return;
+                    return res.status(200).json(new ErrorResponse('Incorrect password.'));
                 }
                 newPassword = bcrypt.hashSync(newPassword, 8);
-                await User.changePassword(parseInt(req.params.id), newPassword)
+                await User.changePassword(parseInt(res.locals.id), newPassword)
                 .then(subResults => {
                     if (subResults.affectedRows > 0) {
                         res.status(200).json(new SuccessResponse('Password changed successfully.'));
@@ -104,7 +91,6 @@ class UsersController {
                     }
                 }, () => {
                     res.status(500).json(new ErrorResponse('Internal server error.'));
-                    return;
                 });
             } else {
                 res.status(200).json(new ErrorResponse('User not found.'));
@@ -114,12 +100,8 @@ class UsersController {
         });
     }
 
-    delete = async (req, res) => {
-        if (res.locals.id !== parseInt(req.params.id)) {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
-        }
-        await User.delete(parseInt(req.params.id))
+    delete = async (_req, res) => {
+        await User.delete(parseInt(res.locals.id))
         .then(results => {
             if (results.affectedRows > 0) {
                 res.status(200).json(new SuccessResponse('Account has been deleted successfully.'));
@@ -128,7 +110,6 @@ class UsersController {
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 }

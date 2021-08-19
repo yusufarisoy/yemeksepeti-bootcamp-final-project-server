@@ -6,58 +6,54 @@ class Restaurant {
 
     create = async (ownerId, body) => {
         const { keySet, values } = parseQueryParamsWithPlaceHolders(body, ', ');
-        let sql = `INSERT INTO ${this.tableName} SET owner_id = ?, status_id = ?, ${keySet}`;
+        let sql = `INSERT INTO ${this.tableName} SET owner_id = ?, status_id = 1, ${keySet}`;
 
-        return await query(sql, [ownerId, 1, ...values]);
+        return await query(sql, [ownerId, ...values]);
     }
 
     findAll = async params => {
         let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
-        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id GROUP BY r.id`;
+        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id`;
 
         if (!Object.keys(params).length) {
+            sql += ' GROUP BY r.id';
             return await query(sql);
         }
 
         const { keySet, values } = parseQueryParamsWithPlaceHolders(params, ' AND ');
         sql += ` WHERE ${keySet}`;
+        sql += ' GROUP BY r.id';
 
         return await query(sql, [...values]);
     }
 
-    findMostPopulars = async params => {
-        let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating FROM ${this.tableName} r 
-        JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id GROUP BY r.id ORDER BY rating DESC LIMIT 5`;
+    findMostPopulars = async cityId => {
+        let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
+        FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id WHERE 
+        r.city_id = ? GROUP BY r.id ORDER BY rating DESC LIMIT 5`;
 
-        if (!Object.keys(params).length) {
-            return await query(sql);
-        }
-
-        const { keySet, values } = parseQueryParamsWithPlaceHolders(params, ' AND ');
-        sql += ` WHERE ${keySet}`;
-
-        return await query(sql, [...values]);
+        return await query(sql, [cityId]);
     }
 
     findById = async id => {
         let sql = `SELECT r.id, r.owner_id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
         FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id 
-        WHERE r.id = ? AND r.status_id = ? GROUP BY r.id`;
+        WHERE r.id = ? AND r.status_id = 1 GROUP BY r.id`;
 
-        return await query(sql, [id, 1]);
+        return await query(sql, [id]);
     }
 
-    update = async (id, body) => {
+    update = async (ownerId, id, body) => {
         const { keySet, values } = parseQueryParamsWithPlaceHolders(body, ', ');
-        let sql = `UPDATE ${this.tableName} SET ${keySet} WHERE id = ?`;
+        let sql = `UPDATE ${this.tableName} SET ${keySet} WHERE owner_id = ? AND id = ?`;
 
-        return await query(sql, [...values, id]);
+        return await query(sql, [...values, ownerId, id]);
     }
 
-    delete = async id => {
-        let sql = `UPDATE ${this.tableName} SET status_id = ? WHERE id = ?`;
+    delete = async (ownerId, id) => {
+        let sql = `UPDATE ${this.tableName} SET status_id = 3 WHERE owner_id = ? AND id = ?`;
 
-        return await query(sql, [3, id]);
+        return await query(sql, [ownerId, id]);
     }
 }
 

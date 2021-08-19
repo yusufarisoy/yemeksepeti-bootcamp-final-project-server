@@ -6,15 +6,13 @@ class FoodsController {
 
     create = async (req, res) => {
         if (res.locals.role !== 'owner') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
         await Restaurant.findById(parseInt(req.params.restaurant_id))
         .then(async results => {
             if (results.length > 0) {
                 if (parseInt(res.locals.id) !== results[0].owner_id) {
-                    res.status(401).json(new ErrorResponse('Unauthorized access.'));
-                    return;
+                    return res.status(401).json(new ErrorResponse('Unauthorized access.'));
                 } else {
                     await Food.create(parseInt(req.params.restaurant_id), req.body)
                     .then(() => {
@@ -25,11 +23,9 @@ class FoodsController {
                 }
             } else {
                 res.status(200).json(new ErrorResponse('Restaurant not found.'));
-                return;
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 
@@ -48,15 +44,13 @@ class FoodsController {
 
     update = async (req, res) => {
         if (res.locals.role !== 'owner') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
         await Restaurant.findById(parseInt(req.params.restaurant_id))
         .then(async results => {
             if (results.length > 0) {
                 if (parseInt(res.locals.id) !== results[0].owner_id) {
-                    res.status(401).json(new ErrorResponse('Unauthorized access.'));
-                    return;
+                    return res.status(401).json(new ErrorResponse('Unauthorized access.'));
                 } else {
                     await Food.update(parseInt(req.params.restaurant_id), parseInt(req.params.id), req.body)
                     .then(subResults => {
@@ -71,25 +65,21 @@ class FoodsController {
                 }
             } else {
                 res.status(200).json(new ErrorResponse('Restaurant not found.'));
-                return;
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 
     delete = async (req, res) => {
         if (res.locals.role !== 'owner') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
         await Restaurant.findById(parseInt(req.params.restaurant_id))
         .then(async results => {
             if (results.length > 0) {
                 if (parseInt(res.locals.id) !== results[0].owner_id) {
-                    res.status(401).json(new ErrorResponse('Unauthorized access.'));
-                    return;
+                    return res.status(401).json(new ErrorResponse('Unauthorized access.'));
                 } else {
                     await Food.delete(parseInt(req.params.restaurant_id), parseInt(req.params.id))
                     .then(subResults => {
@@ -104,11 +94,9 @@ class FoodsController {
                 }
             } else {
                 res.status(200).json(new ErrorResponse('Restaurant not found.'));
-                return;
             }
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
-            return;
         });
     }
 }

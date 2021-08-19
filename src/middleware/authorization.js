@@ -10,33 +10,28 @@ module.exports = () => {
             const header = req.headers.authorization;
             const bearer = 'Bearer';
             if(!header || !header.startsWith(bearer)) {
-                res.status(401).json(new ErrorResponse('Unauthorized access.'));
-                return;
+                return res.status(401).json(new ErrorResponse('Unauthorized access.'));
             }
 
             const token = header.slice(7);
             const secretKey = process.env.JWT_SECRET;
             jwt.verify(token, secretKey, async (error, decoded) => {
                 if (error) {
-                    res.status(401).json(new ErrorResponse('Authentication failed.'));
-                    return;
+                    return res.status(401).json(new ErrorResponse('Authentication failed.'));
                 }
 
                 await User.authorize(decoded.id, decoded.email)
                 .then(results => {
-                    if (!results) {
-                        res.status(401).json(new ErrorResponse('Authentication failed.'));
-                        return;
+                    if (results.length === 0) {
+                        return res.status(401).json(new ErrorResponse('Authentication failed.'));
                     }
+                    res.locals.id = decoded.id;
+                    res.locals.role = decoded.role;
+                    next();
                 }, () => {
-                    res.status(401).json(new ErrorResponse('Authentication failed.'));
-                    return;
+                    return res.status(401).json(new ErrorResponse('Authentication failed.'));
                 });
-
-                res.locals.id = decoded.id;
-                res.locals.role = decoded.role;
-                next();
-            })
+            });
         } catch (ex) {
             ex.status = 401;
             next(ex);

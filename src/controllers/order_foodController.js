@@ -5,19 +5,18 @@ class Order_FoodController {
 
     create = async (req, res) => {
         if (res.locals.role !== 'user') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
         await Order_Food.create(req.body.food_list)
         .then(() => {
-            res.status(200).json(new SuccessResponse('Food added successfully.'));
+            res.status(200).json(new SuccessResponse('Foods of order added successfully.'));
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
         });
     }
 
     findAll = async (req, res) => {
-        await Order_Food.findAll(parseInt(req.params.order_id))
+        await Order_Food.findAll(parseInt(req.params.id))
         .then(results => {
             if (results.length > 0) {
                 res.status(200).json(new SuccessDataResponse('Foods of order listed successfully.', results));

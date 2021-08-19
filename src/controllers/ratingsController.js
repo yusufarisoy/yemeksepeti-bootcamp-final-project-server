@@ -5,10 +5,9 @@ class RatingsController {
 
     create = async (req, res) => {
         if (res.locals.role !== 'user') {
-            res.status(401).json(new ErrorResponse('Unauthorized access.'));
-            return;
+            return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
-        await Rating.create(res.locals.id, req.body)
+        await Rating.create(parseInt(res.locals.id), req.body)
         .then(() => {
             res.status(200).json(new SuccessResponse('Restaurant rated successfully.'));
         }, () => {
