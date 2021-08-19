@@ -30,9 +30,9 @@ class Restaurant {
     findMostPopulars = async cityId => {
         let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
         FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id WHERE 
-        r.city_id = ? GROUP BY r.id ORDER BY rating DESC LIMIT 5`;
+        r.city_id = ${cityId} AND r.status_id = 1 GROUP BY r.id`;
 
-        return await query(sql, [cityId]);
+        return await query(sql);
     }
 
     findById = async id => {

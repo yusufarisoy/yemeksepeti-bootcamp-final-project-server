@@ -11,7 +11,7 @@ class RestaurantsController {
         .then(() => {
             res.status(200).json(new SuccessResponse('Restaurant created successfully.'));
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
+            res.status(500).json(new ErrorResponse('Internal server error.1'));
         });
     }
 
@@ -24,12 +24,12 @@ class RestaurantsController {
                 res.status(200).json(new ErrorResponse('No restaurant found.'));
             }
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
+            res.status(500).json(new ErrorResponse('Internal server error.2'));
         });
     }
 
     findMostPopulars = async (req, res) => {
-        await Restaurant.findMostPopulars(req.query)
+        await Restaurant.findMostPopulars(parseInt(req.params.city_id))
         .then(results => {
             if (results.length > 0) {
                 res.status(200).json(new SuccessDataResponse('Most popular restaurants listed successfully.', results));
@@ -37,7 +37,7 @@ class RestaurantsController {
                 res.status(200).json(new ErrorResponse('No restaurant found.'));
             }
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
+            res.status(500).json(new ErrorResponse('Internal server error.3'));
         });
     }
 
@@ -50,7 +50,7 @@ class RestaurantsController {
                 res.status(200).json(new ErrorResponse('Restaurant not found.'));
             }
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
+            res.status(500).json(new ErrorResponse('Internal server error.4'));
         });
     }
 
@@ -66,7 +66,7 @@ class RestaurantsController {
                 res.status(200).json(new ErrorResponse('Information update failed.'));
             }
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
+            res.status(500).json(new ErrorResponse('Internal server error.5'));
         });
     }
 
@@ -82,7 +82,7 @@ class RestaurantsController {
                 res.status(200).json(new ErrorResponse('Restaurant delete failed.'));
             }
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.'));
+            res.status(500).json(new ErrorResponse('Internal server error.6'));
         });
     }
 }

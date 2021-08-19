@@ -7,7 +7,7 @@ const RestaurantsController = require('../controllers/restaurantsController');
 
 router.get('/', RestaurantsController.findAll);
 router.get('/:id', RestaurantsController.findById);
-router.get('/most-populars', RestaurantsController.findMostPopulars);
+router.get('/most-populars/:city_id', RestaurantsController.findMostPopulars);
 router.get('/:restaurant_id/orders', authorize(), OrdersController.findAllOfRestaurant);
 
 router.post('/new', authorize(), RestaurantsController.create);
