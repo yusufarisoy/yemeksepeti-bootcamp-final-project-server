@@ -14,8 +14,8 @@ class User {
     }
 
     findById = async id => {
-        let sql = `SELECT u.id, r.type AS role, c.id AS city_id, c.name AS city, u.email, u.password, u.name, u.surname, u.image, u.phone_number FROM ${this.tableName} u 
-        JOIN roles r ON r.id = u.role_id JOIN addresses a ON a.user_id = u.id JOIN districts d ON d.id = a.district_id JOIN cities c ON c.id = d.city_id 
+        let sql = `SELECT u.id, r.type AS role, c.id AS city_id, u.email, u.password, u.name, u.surname, u.image, u.phone_number FROM ${this.tableName} u 
+        JOIN roles r ON r.id = u.role_id LEFT JOIN addresses a ON a.user_id = u.id LEFT JOIN districts d ON d.id = a.district_id LEFT JOIN cities c ON c.id = d.city_id 
         WHERE u.id = ? AND u.status_id = 1`;
 
         return await query(sql, [id]);
