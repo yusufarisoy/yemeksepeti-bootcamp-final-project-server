@@ -9,8 +9,8 @@ class OrdersController {
             return res.status(401).json(new ErrorResponse('Unauthorized access.'));
         }
         await Order.create(parseInt(res.locals.id), req.body)
-        .then(() => {
-            res.status(200).json(new SuccessResponse('Order received successfully.'));
+        .then(results => {
+            res.status(200).json(new SuccessDataResponse('Order received successfully.', { order_id: results.insertId }));
         }, () => {
             res.status(500).json(new ErrorResponse('Internal server error.'));
         });
