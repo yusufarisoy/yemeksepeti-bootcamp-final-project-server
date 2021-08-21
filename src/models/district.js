@@ -3,9 +3,9 @@ const query = require('../db/connection');
 class District {
     tableName = 'districts';
 
-    findAll = async () => {
-        let sql = `SELECT * FROM ${this.tableName}`;
-        return await query(sql);
+    findAll = async cityId => {
+        let sql = `SELECT * FROM ${this.tableName} WHERE city_id = ?`;
+        return await query(sql, [cityId]);
     }
 }
 

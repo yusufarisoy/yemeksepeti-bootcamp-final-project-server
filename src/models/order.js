@@ -20,13 +20,13 @@ class Order {
         orf.food_id = f.id JOIN ratings ra ON ra.restaurant_id = o.restaurant_id WHERE o.user_id = ?`;
 
         if (!Object.keys(params).length) {
-            sql += ' GROUP BY o.id';
+            sql += ' GROUP BY o.id ORDER BY o.id DESC';
             return await query(sql, [userId]);
         }
 
         const { keySet, values } = parseQueryParamsWithPlaceHolders(params, ' AND ');
         sql += ` AND ${keySet}`;
-        sql += ' GROUP BY o.id';
+        sql += ' GROUP BY o.id ORDER BY o.id DESC';
 
         return await query(sql, [userId, ...values]);
     }
@@ -39,13 +39,13 @@ class Order {
         orf.food_id = f.id JOIN restaurants r ON r.id = o.restaurant_id WHERE r.owner_id = ? AND o.restaurant_id = ?`;
 
         if (!Object.keys(params).length) {
-            sql += ' GROUP BY o.id';
+            sql += ' GROUP BY o.id ORDER BY o.id DESC';
             return await query(sql, [restaurantOwnerId, restaurantId]);
         }
 
         const { keySet, values } = parseQueryParamsWithPlaceHolders(params, ' AND ');
         sql += ` AND ${keySet}`;
-        sql += ' GROUP BY o.id';
+        sql += ' GROUP BY o.id ORDER BY o.id DESC';
 
         return await query(sql, [restaurantOwnerId, restaurantId, ...values]);
     }
