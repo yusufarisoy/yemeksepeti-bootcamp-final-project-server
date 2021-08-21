@@ -3,7 +3,7 @@ const { SuccessDataResponse, ErrorResponse } = require('../utils/httpResponses')
 
 class DistrictsController {
 
-    findAll = async (_req, res) => {
+    findAll = async (req, res) => {
         await District.findAll(req.query.city_id)
         .then(results => {
             res.status(200).json(new SuccessDataResponse('Districts listed successfully.', results));
