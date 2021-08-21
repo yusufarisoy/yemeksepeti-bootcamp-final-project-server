@@ -16,7 +16,7 @@ class RatingsController {
     }
 
     findAll = async (req, res) => {
-        await Rating.findAll(req.body.restaurant_id)
+        await Rating.findAll(req.query)
         .then(results => {
             if (results.length > 0) {
                 res.status(200).json(new SuccessDataResponse('Ratings of restaurant listed successfully.', results));

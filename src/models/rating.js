@@ -11,10 +11,18 @@ class Rating {
         return await query(sql, [userId, ...values]);
     }
 
-    findAll = async restaurantId => {
-        let sql = `SELECT restaurant_id, score, review FROM ${this.tableName} WHERE restaurant_id = ?`;
+    findAll = async params => {
+        let sql = `SELECT restaurant_id, score, review FROM ${this.tableName}`;
+        
+        if (!Object.keys(params).length) {
+            sql += ' GROUP BY r.id';
+            return await query(sql);
+        }
 
-        return await query(sql, [restaurantId]);
+        const { keySet, values } = parseQueryParamsWithPlaceHolders(params, ' AND ');
+        sql += ` WHERE ${keySet}`;
+
+        return await query(sql, [...values]);
     }
 }
 
