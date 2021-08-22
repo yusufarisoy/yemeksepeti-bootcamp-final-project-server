@@ -12,7 +12,7 @@ class Restaurant {
     }
 
     findAll = async params => {
-        let sql = `SELECT r.id, c.name AS city, d.name AS district, r.image, r.banner_image, r.name, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
+        let sql = `SELECT r.id, r.city_id, c.name AS city, r.district_id, d.name AS district, r.image, r.banner_image, r.name, r.phone_number, r.min_order_fee, r.avg_delivery_time, AVG(ra.score) AS rating 
         FROM ${this.tableName} r JOIN cities c ON r.city_id = c.id JOIN districts d ON r.district_id = d.id JOIN ratings ra ON ra.restaurant_id = r.id`;
 
         if (!Object.keys(params).length) {
