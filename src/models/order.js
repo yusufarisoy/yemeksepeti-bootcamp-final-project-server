@@ -17,7 +17,7 @@ class Order {
         SUM(orf.quantity * f.price) AS total_price FROM ${this.tableName} o JOIN restaurants r ON o.restaurant_id = r.id JOIN addresses a ON 
         o.delivery_address_id = a.id JOIN districts d ON a.district_id = d.id JOIN cities c ON d.city_id = c.id JOIN payment_types AS p ON 
         o.payment_type_id = p.id JOIN order_statuses s ON o.status_id = s.id JOIN order_food orf ON o.id = orf.order_id JOIN foods f ON 
-        orf.food_id = f.id JOIN ratings ra ON ra.restaurant_id = o.restaurant_id WHERE o.user_id = ?`;
+        orf.food_id = f.id LEFT JOIN ratings ra ON ra.restaurant_id = o.restaurant_id WHERE o.user_id = ?`;
 
         if (!Object.keys(params).length) {
             sql += ' GROUP BY o.id ORDER BY o.id DESC';

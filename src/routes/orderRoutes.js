@@ -9,6 +9,4 @@ router.get('/:id/foods', authorize(), Order_FoodController.findAll);
 router.post('/:id/foods/add', authorize(), Order_FoodController.create);
 router.post('/new', authorize(), OrdersController.create);
 
-router.put('/:id/update', authorize(), OrdersController.updateStatus);
-
 module.exports = router;

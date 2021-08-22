@@ -30,7 +30,7 @@ class OrdersController {
     }
 
     findAllOfRestaurant = async (req, res) => {
-        await Order.findAllOfRestaurant(parseInt(res.locals.id), parseInt(req.params.restaurant_id), req.body)
+        await Order.findAllOfRestaurant(parseInt(res.locals.id), parseInt(req.params.restaurant_id), req.query)
         .then(results => {
             if (results.length > 0) {
                 res.status(200).json(new SuccessDataResponse('Orders of restaurant listed successfully.', results));

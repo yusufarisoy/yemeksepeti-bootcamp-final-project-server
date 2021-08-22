@@ -13,6 +13,7 @@ router.get('/:restaurant_id/orders', authorize(), OrdersController.findAllOfRest
 router.post('/new', authorize(), RestaurantsController.create);
 
 router.put('/:id/update', authorize(), RestaurantsController.update);
+router.put('/:restaurant_id/orders/:id/update', authorize(), OrdersController.updateStatus);
 
 router.delete('/:id/delete', authorize(), RestaurantsController.delete);
 
