@@ -50,7 +50,7 @@ class RestaurantsController {
                 res.status(200).json(new ErrorResponse('Restaurant not found.'));
             }
         }, () => {
-            res.status(500).json(new ErrorResponse('Internal server error.4'));
+            res.status(500).json(new ErrorResponse('Internal server error.'));
         });
     }
 
