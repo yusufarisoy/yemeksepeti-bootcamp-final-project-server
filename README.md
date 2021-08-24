@@ -18,6 +18,9 @@ I used [AWS RDS](https://aws.amazon.com/rds/) for online database (MySQL).
 https://yemeksepeti-bootcamp-project.herokuapp.com/
 ```
 
+## Class Diagram
+[Class Diagram](./app_preview/class_diagram.png)
+
 ## Responses
 #### Success Data Response
 ```
