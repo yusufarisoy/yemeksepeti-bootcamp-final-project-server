@@ -19,7 +19,7 @@ https://yemeksepeti-bootcamp-project.herokuapp.com/
 ```
 
 ## Class Diagram
-[Class Diagram](./app_preview/class_diagram.png)
+![Class Diagram](./app_preview/class_diagram.png)
 
 ## Responses
 #### Success Data Response
